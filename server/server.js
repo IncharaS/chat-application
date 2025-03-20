@@ -25,9 +25,6 @@ app.use('/api/messages',messageRoutes);
 app.use('/api/users',userRoutes);
 
 
-app.get('*', (req, res) => {res.sendFile(path.join(__dirname, "client", "dist", "index.html"))
-});
-
 server.listen(PORT, () => {
   connectToMongoDB()
   console.log(`Server is running on ports ${PORT}`);
