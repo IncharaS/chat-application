@@ -59,9 +59,4 @@ io.on("connection", (socket) => {
   });
 });
 
-// Start the server on your desired port (5000 or any other)
-server.listen(5000, () => {
-  console.log("Server is running on port 5000");
-});
-
 export { app, io, server };
