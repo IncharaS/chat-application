@@ -9,14 +9,16 @@ const useSendMessage = () => {
 	const sendMessage = async (message) => {
 		setLoading(true);
 		try {
-			const res = await fetch(`${apiUrl}/api/messages/send/${selectedConversation._id}`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ message }),
-				Authorization: `Bearer ${token}`, 
-			});
+const res = await fetch(`${apiUrl}/api/messages/send/${selectedConversation._id}`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`,  // Adding the token in the Authorization header
+  },
+  body: JSON.stringify({ message }),
+  credentials: "include",  // Ensure cookies (like jwt) are included in the request
+});
+
 			const data = await res.json();
 			if (data.error) throw new Error(data.error);
 

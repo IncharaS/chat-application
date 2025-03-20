@@ -8,12 +8,15 @@ const useLogout = () => {
 	const apiUrl = import.meta.env.VITE_BACKEND_URL;
 	const logout = async () => {
 		setLoading(true);
-		try {
-			const res = await fetch(`${apiUrl}/api/auth/logout`, {
-				method: "GET",
-				headers: { "Content-Type": "application/json" },
-				Authorization: `Bearer ${token}`, 
-			});
+try {
+  const res = await fetch(`${apiUrl}/api/auth/logout`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,  // Adding the token in the Authorization header
+    },
+    credentials: "include",  // Ensure cookies (like jwt) are included in the request
+  });
 			const data = await res.json();
 			if (data.error) {
 				throw new Error(data.error);

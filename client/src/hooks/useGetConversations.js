@@ -9,7 +9,15 @@ const useGetConversations = () => {
 		const getConversations = async () => {
 			setLoading(true);
 			try {
-				const res = await fetch(`${apiUrl}/api/users`, { Authorization: `Bearer ${token}`, });
+				const res = await fetch(`${apiUrl}/api/users`, {
+  method: "GET", // Assuming you are making a GET request
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`, // Add the token here
+  },
+  credentials: "include", // Include cookies in the request
+});
+
 				const data = await res.json();
 				if (data.error) {
 					throw new Error(data.error);

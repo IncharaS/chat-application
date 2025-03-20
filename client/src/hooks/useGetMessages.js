@@ -10,7 +10,14 @@ const useGetMessages = () => {
 		const getMessages = async () => {
 			setLoading(true);
 			try {
-				const res = await fetch(`${apiUrl}/api/messages/${selectedConversation._id}`, { Authorization: `Bearer ${token}` });
+const res = await fetch(`${apiUrl}/api/messages/${selectedConversation._id}`, {
+  method: "GET", // Assuming you're using a GET request
+  headers: {
+    "Authorization": `Bearer ${token}`,  // Sending the token in the Authorization header
+    "Content-Type": "application/json", // Optional, depending on your backend requirements
+  },
+  credentials: "include",  // Include cookies in the request
+});
 				const data = await res.json();
 				if (data.error) throw new Error(data.error);
 				setMessages(data);
