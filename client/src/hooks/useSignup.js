@@ -28,6 +28,7 @@ const useSignup = () => {
 
 			//localStorage
 			localStorage.setItem("chat-user", JSON.stringify(data));
+			localStorage.setItem("auth-token", data.token);
 			//context
 			setAuthUser(data);
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
 import toast from "react-hot-toast";
-
+const token = localStorage.getItem("auth-token");
 const useLogout = () => {
 	const [loading, setLoading] = useState(false);
 	const { setAuthUser } = useAuthContext();
@@ -12,6 +12,7 @@ const useLogout = () => {
 			const res = await fetch(`${apiUrl}/api/auth/logout`, {
 				method: "GET",
 				headers: { "Content-Type": "application/json" },
+				Authorization: `Bearer ${token}`, 
 			});
 			const data = await res.json();
 			if (data.error) {
