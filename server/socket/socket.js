@@ -10,6 +10,7 @@ const corsOptions = {
   origin: ["https://chat-application-ruddy-one.vercel.app"], // Allow only your frontend domain
   methods: ["GET", "POST"], // Allow the GET and POST methods
   allowedHeaders: ["Content-Type", "Authorization"], // Allow certain headers if needed
+  credentials: true,
 };
 
 app.use(cors(corsOptions)); // Use CORS middleware
