@@ -1,38 +1,67 @@
 import { Server } from "socket.io";
 import http from "http";
 import express from "express";
+import cors from "cors"; // Import CORS package
 
 const app = express();
 
-const server = http.createServer(app);
-const io = new Server(server, {
-	cors: {
-		origin: ["https://chat-application-ruddy-one.vercel.app"],
-		methods: ["GET", "POST"],
-	},
-});
-
-export const getReceiverSocketId = (receiverId) => {
-	return userSocketMap[receiverId];
+// Enable CORS for your frontend domain
+const corsOptions = {
+  origin: ["https://chat-application-ruddy-one.vercel.app"], // Allow only your frontend domain
+  methods: ["GET", "POST"], // Allow the GET and POST methods
+  allowedHeaders: ["Content-Type", "Authorization"], // Allow certain headers if needed
 };
 
+app.use(cors(corsOptions)); // Use CORS middleware
+
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: ["https://chat-application-ruddy-one.vercel.app"], // Allow only your frontend domain to connect to the socket
+    methods: ["GET", "POST"], // Allow the GET and POST methods for socket communication
+  },
+});
+
+// Store userId to socketId mapping
 const userSocketMap = {}; // {userId: socketId}
 
+export const getReceiverSocketId = (receiverId) => {
+  return userSocketMap[receiverId]; // Retrieve socketId based on userId
+};
+
+// Handle socket connections
 io.on("connection", (socket) => {
-	console.log("a user connected", socket.id);
+  console.log("A user connected: ", socket.id);
 
-	const userId = socket.handshake.query.userId;
-	if (userId != "undefined") userSocketMap[userId] = socket.id;
+  // Retrieve userId from socket handshake query (client should send this on connection)
+  const userId = socket.handshake.query.userId;
+  
+  if (userId !== "undefined" && userId) {
+    // Register the socketId with the userId
+    userSocketMap[userId] = socket.id;
+  }
 
-	// io.emit() is used to send events to all the connected clients
-	io.emit("getOnlineUsers", Object.keys(userSocketMap));
+  // Emit the list of online users to all connected clients
+  io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
-	// socket.on() is used to listen to the events. can be used both on client and server side
-	socket.on("disconnect", () => {
-		console.log("user disconnected", socket.id);
-		delete userSocketMap[userId];
-		io.emit("getOnlineUsers", Object.keys(userSocketMap));
-	});
+  // Listen for disconnection and clean up
+  socket.on("disconnect", () => {
+    console.log("A user disconnected: ", socket.id);
+    
+    // Remove user from the map when they disconnect
+    if (userId && userSocketMap[userId]) {
+      delete userSocketMap[userId];
+    }
+
+    // Emit the updated list of online users
+    io.emit("getOnlineUsers", Object.keys(userSocketMap));
+  });
+});
+
+// Start the server on your desired port (5000 or any other)
+server.listen(5000, () => {
+  console.log("Server is running on port 5000");
 });
 
 export { app, io, server };
